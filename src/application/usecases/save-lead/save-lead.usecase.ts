@@ -9,7 +9,8 @@ export class SaveLeadUseCase implements SaveLeadInterface {
     await this.leadRepository.save({
       name: lead.name,
       email: lead.email,
-      status: lead.status
+      status: lead.status,
+      created_at: new Date()
     })
   }
 }
