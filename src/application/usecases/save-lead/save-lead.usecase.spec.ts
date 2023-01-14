@@ -5,18 +5,13 @@ const leadRepository: jest.Mocked<SaveLeadRepositoryInterface> = {
   save: jest.fn()
 }
 
-type SutTypes = {
-  sut: SaveLeadUseCase
-}
-
-const makeSut = (): SutTypes => {
-  const sut = new SaveLeadUseCase(leadRepository)
-  return { sut }
+const makeSut = (): SaveLeadUseCase => {
+  return new SaveLeadUseCase(leadRepository)
 }
 
 describe('SaveLeadUseCase', () => {
   test('should call LeadRepository.save once and with correct values', async () => {
-    const { sut } = makeSut()
+    const sut = makeSut()
 
     await sut.execute('Any Name', 'anyEmail@email.com')
 
@@ -26,5 +21,15 @@ describe('SaveLeadUseCase', () => {
       email: 'anyEmail@email.com',
       status: 'Interested'
     })
+  })
+
+  test('should return server error if LeadRepository.save throws', async () => {
+    const sut = makeSut()
+
+    leadRepository.save.mockRejectedValueOnce(new Error())
+
+    const response = sut.execute('Any Name', 'anyEmail@email.com')
+
+    await expect(response).rejects.toThrow()
   })
 })
