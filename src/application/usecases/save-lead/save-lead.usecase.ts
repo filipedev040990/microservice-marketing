@@ -1,8 +1,8 @@
 import { Lead } from '@/domain/entities/lead.entity'
 import { SaveLeadRepositoryInterface } from '@/domain/repositories/save-lead.repository.interface'
-import { SaveLeadInterface } from '@/domain/usecases/save-lead.usecase.interface'
+import { SaveLeadUseCaseInterface } from '@/domain/usecases/save-lead.usecase.interface'
 
-export class SaveLeadUseCase implements SaveLeadInterface {
+export class SaveLeadUseCase implements SaveLeadUseCaseInterface {
   constructor (readonly leadRepository: SaveLeadRepositoryInterface) {}
   async execute (name: string, email: string): Promise<void> {
     const lead = new Lead(name, email)
