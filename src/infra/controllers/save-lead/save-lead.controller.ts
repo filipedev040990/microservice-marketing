@@ -5,7 +5,7 @@ import { HttpRequest, HttpResponse } from '@/shared/types/http.type'
 
 export class SaveLeadController implements ControllerInterface {
   async execute (input: HttpRequest): Promise<HttpResponse> {
-    for (const field of ['name']) {
+    for (const field of ['name', 'email']) {
       if (!input.body[field]) {
         return badRequest(new MissingParamError(field))
       }

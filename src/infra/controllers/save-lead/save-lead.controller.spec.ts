@@ -22,4 +22,12 @@ describe('SaveLeadController', () => {
     const response = await sut.execute(input)
     expect(response).toEqual(badRequest(new MissingParamError('name')))
   })
+
+  test('should return 400 if email is not provided', async () => {
+    const sut = makeSut()
+    const input = makeLeadInput()
+    input.body.email = null
+    const response = await sut.execute(input)
+    expect(response).toEqual(badRequest(new MissingParamError('email')))
+  })
 })
