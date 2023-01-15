@@ -5,7 +5,7 @@ import { GetLeadByEmailUseCaseInterface } from '@/domain/usecases/get-lead-by-em
 export class GetLeadByEmailUseCase implements GetLeadByEmailUseCaseInterface {
   constructor (private readonly leadRepository: GetLeadByEmailRepositoryInterface) {}
   async execute (email: string): Promise<Lead> {
-    await this.leadRepository.getByEmail(email)
-    return null
+    const lead = await this.leadRepository.getByEmail(email)
+    return lead || null
   }
 }
