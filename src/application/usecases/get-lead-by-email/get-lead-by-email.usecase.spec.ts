@@ -18,4 +18,12 @@ describe('GetLeadByEmailUseCase', () => {
     expect(leadRepository.getByEmail).toHaveBeenCalledTimes(1)
     expect(leadRepository.getByEmail).toHaveBeenCalledWith('anyEmail@email.com')
   })
+
+  test('should return null when email does not exists', async () => {
+    const sut = makeSut()
+
+    const response = await sut.execute('anotherEmail@email.com')
+
+    expect(response).toBeNull()
+  })
 })
