@@ -1,5 +1,6 @@
 import { ControllerInterface } from '@/domain/controllers/controller.interface'
 import { GetLeadByEmailUseCaseInterface } from '@/domain/usecases/get-lead-by-email.usecase.interface'
+import { InvalidParamError } from '@/shared/errors/invalid-param.error'
 import { MissingParamError } from '@/shared/errors/missing-param.error'
 import { badRequest } from '@/shared/helpers/http.helper'
 import { HttpRequest, HttpResponse } from '@/shared/types/http.type'
@@ -14,7 +15,10 @@ export class SaveLeadController implements ControllerInterface {
     }
 
     const { email } = input.body
-    await this.getLeadByEmailUseCase.execute(email)
+    const emailExists = await this.getLeadByEmailUseCase.execute(email)
+    if (emailExists) {
+      return badRequest(new InvalidParamError('This email already exists'))
+    }
     return null
   }
 }

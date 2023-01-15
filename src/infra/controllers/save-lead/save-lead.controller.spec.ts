@@ -1,4 +1,5 @@
 import { SaveLeadUseCaseInterface } from '@/domain/usecases/save-lead.usecase.interface'
+import { InvalidParamError } from '@/shared/errors/invalid-param.error'
 import { MissingParamError } from '@/shared/errors/missing-param.error'
 import { badRequest } from '@/shared/helpers/http.helper'
 import { HttpRequest } from '@/shared/types/http.type'
@@ -22,9 +23,13 @@ const makeLeadInput = (): HttpRequest => ({
 let getLeadByEmailUseCaseStub
 
 describe('SaveLeadController', () => {
-  beforeAll(() => {
+  beforeEach(() => {
     getLeadByEmailUseCaseStub = makeGetLeadByEmailUseCaseStub()
   })
+  afterEach(() => {
+    jest.resetAllMocks()
+  })
+
   test('should return 400 if name is not provided', async () => {
     const sut = makeSut()
     const input = makeLeadInput()
@@ -41,12 +46,30 @@ describe('SaveLeadController', () => {
     expect(response).toEqual(badRequest(new MissingParamError('email')))
   })
 
-  test('should call GetLeadByEmailUseCase once and with correct values', async () => {
+  test('should call GetLeadByEmailUseCase once and with correct email', async () => {
     const sut = makeSut()
     const input = makeLeadInput()
     await sut.execute(input)
 
     expect(getLeadByEmailUseCaseStub.execute).toHaveBeenCalledTimes(1)
     expect(getLeadByEmailUseCaseStub.execute).toHaveBeenCalledWith('anyEmail@email.com')
+  })
+
+  test('should return 400 if email already exists', async () => {
+    const sut = makeSut()
+    const input = makeLeadInput()
+
+    getLeadByEmailUseCaseStub.execute.mockResolvedValueOnce({
+      id: '390d8ad3-185e-43c8-8c3f-48eaea7e46f5',
+      name: 'Any Name',
+      email: 'anyEmail@email.com',
+      status: 'Interested',
+      created_at: new Date()
+    })
+
+    const response = await sut.execute(input)
+
+    expect(getLeadByEmailUseCaseStub.execute).toHaveBeenCalledTimes(1)
+    expect(response).toEqual(badRequest(new InvalidParamError('This email already exists')))
   })
 })
