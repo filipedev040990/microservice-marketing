@@ -13,10 +13,9 @@ export class SaveLeadController implements ControllerInterface {
 
   async execute (input: HttpRequest): Promise<HttpResponse> {
     try {
-      for (const field of ['name', 'email']) {
-        if (!input.body[field]) {
-          return badRequest(new MissingParamError(field))
-        }
+      const missingParamName = this.validateRequiredFields(input)
+      if (missingParamName) {
+        return badRequest(new MissingParamError(missingParamName))
       }
 
       const emailExists = await this.getLeadByEmailUseCase.execute(input.body.email)
@@ -28,6 +27,14 @@ export class SaveLeadController implements ControllerInterface {
       return noContent()
     } catch (error) {
       return serverError(error)
+    }
+  }
+
+  validateRequiredFields = (input): any => {
+    for (const field of ['name', 'email']) {
+      if (!input.body[field]) {
+        return field
+      }
     }
   }
 }
