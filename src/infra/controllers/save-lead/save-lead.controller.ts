@@ -2,7 +2,7 @@ import { ControllerInterface } from '@/domain/controllers/controller.interface'
 import { GetLeadByEmailUseCaseInterface } from '@/domain/usecases/get-lead-by-email.usecase.interface'
 import { SaveLeadUseCaseInterface } from '@/domain/usecases/save-lead.usecase.interface'
 import { InvalidParamError, MissingParamError } from '@/shared/errors'
-import { badRequest, serverError } from '@/shared/helpers/http.helper'
+import { badRequest, noContent, serverError } from '@/shared/helpers/http.helper'
 import { HttpRequest, HttpResponse } from '@/shared/types/http.type'
 
 export class SaveLeadController implements ControllerInterface {
@@ -25,6 +25,7 @@ export class SaveLeadController implements ControllerInterface {
       }
 
       await this.saveLeadUseCase.execute(input.body.name, input.body.email)
+      return noContent()
     } catch (error) {
       return serverError(error)
     }

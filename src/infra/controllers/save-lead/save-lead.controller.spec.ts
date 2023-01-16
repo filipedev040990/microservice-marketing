@@ -1,7 +1,7 @@
 import { GetLeadByEmailUseCaseInterface } from '@/domain/usecases/get-lead-by-email.usecase.interface'
 import { SaveLeadUseCaseInterface } from '@/domain/usecases/save-lead.usecase.interface'
 import { InvalidParamError, MissingParamError } from '@/shared/errors'
-import { badRequest, serverError } from '@/shared/helpers/http.helper'
+import { badRequest, noContent, serverError } from '@/shared/helpers/http.helper'
 import { HttpRequest } from '@/shared/types/http.type'
 import { SaveLeadController } from './save-lead.controller'
 
@@ -37,14 +37,12 @@ describe('SaveLeadController', () => {
 
   test('should return 400 if name is not provided', async () => {
     input.body.name = null
-    const response = await sut.execute(input)
-    expect(response).toEqual(badRequest(new MissingParamError('name')))
+    expect(await sut.execute(input)).toEqual(badRequest(new MissingParamError('name')))
   })
 
   test('should return 400 if email is not provided', async () => {
     input.body.email = null
-    const response = await sut.execute(input)
-    expect(response).toEqual(badRequest(new MissingParamError('email')))
+    expect(await sut.execute(input)).toEqual(badRequest(new MissingParamError('email')))
   })
 
   test('should call GetLeadByEmailUseCase once and with correct email', async () => {
@@ -61,15 +59,12 @@ describe('SaveLeadController', () => {
       status: 'Interested',
       created_at: new Date()
     })
-    const response = await sut.execute(input)
-    expect(getLeadByEmailUseCaseStub.execute).toHaveBeenCalledTimes(1)
-    expect(response).toEqual(badRequest(new InvalidParamError('This email already exists')))
+    expect(await sut.execute(input)).toEqual(badRequest(new InvalidParamError('This email already exists')))
   })
 
   test('should return 500 if GetLeadByEmailUseCase throw an exception', async () => {
     getLeadByEmailUseCaseStub.execute.mockRejectedValueOnce(new Error())
-    const error = await sut.execute(input)
-    expect(error).toEqual(serverError(new Error()))
+    expect(await sut.execute(input)).toEqual(serverError(new Error()))
   })
 
   test('should call SaveLeadUseCase once and with correct values', async () => {
@@ -80,7 +75,10 @@ describe('SaveLeadController', () => {
 
   test('should return 500 if SaveLeadUseCase throw an exception', async () => {
     saveLeadUseCaseStub.execute.mockRejectedValueOnce(new Error())
-    const error = await sut.execute(input)
-    expect(error).toEqual(serverError(new Error()))
+    expect(await sut.execute(input)).toEqual(serverError(new Error()))
+  })
+
+  test('should return 204 on success', async () => {
+    expect(await sut.execute(input)).toEqual(noContent())
   })
 })
