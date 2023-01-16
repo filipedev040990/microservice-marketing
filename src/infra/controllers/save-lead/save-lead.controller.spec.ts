@@ -10,7 +10,7 @@ const makeGetLeadByEmailUseCaseStub = (): SaveLeadUseCaseInterface => ({
 })
 
 const makeSut = (): SaveLeadController => {
-  return new SaveLeadController(getLeadByEmailUseCaseStub)
+  return new SaveLeadController(getLeadByEmailUseCaseStub, saveLeadUseCaseStub)
 }
 
 const makeLeadInput = (): HttpRequest => ({
@@ -21,6 +21,9 @@ const makeLeadInput = (): HttpRequest => ({
 })
 
 let getLeadByEmailUseCaseStub
+const saveLeadUseCaseStub: jest.Mocked<SaveLeadUseCaseInterface> = {
+  execute: jest.fn()
+}
 
 describe('SaveLeadController', () => {
   beforeEach(() => {
@@ -82,5 +85,14 @@ describe('SaveLeadController', () => {
     const error = await sut.execute(input)
 
     expect(error).toEqual(serverError(new Error()))
+  })
+
+  test('should call SaveLeadUseCase once and with correct values', async () => {
+    const sut = makeSut()
+    const input = makeLeadInput()
+    await sut.execute(input)
+
+    expect(saveLeadUseCaseStub.execute).toHaveBeenCalledTimes(1)
+    expect(saveLeadUseCaseStub.execute).toHaveBeenCalledWith('Any Name', 'anyEmail@email.com')
   })
 })
