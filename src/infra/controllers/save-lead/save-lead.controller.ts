@@ -1,8 +1,7 @@
 import { ControllerInterface } from '@/domain/controllers/controller.interface'
 import { GetLeadByEmailUseCaseInterface } from '@/domain/usecases/get-lead-by-email.usecase.interface'
 import { SaveLeadUseCaseInterface } from '@/domain/usecases/save-lead.usecase.interface'
-import { InvalidParamError } from '@/shared/errors/invalid-param.error'
-import { MissingParamError } from '@/shared/errors/missing-param.error'
+import { InvalidParamError, MissingParamError } from '@/shared/errors'
 import { badRequest, serverError } from '@/shared/helpers/http.helper'
 import { HttpRequest, HttpResponse } from '@/shared/types/http.type'
 
