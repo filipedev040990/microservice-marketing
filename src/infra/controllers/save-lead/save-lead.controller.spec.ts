@@ -1,3 +1,4 @@
+import { GetLeadByEmailUseCaseInterface } from '@/domain/usecases/get-lead-by-email.usecase.interface'
 import { SaveLeadUseCaseInterface } from '@/domain/usecases/save-lead.usecase.interface'
 import { InvalidParamError } from '@/shared/errors/invalid-param.error'
 import { MissingParamError } from '@/shared/errors/missing-param.error'
@@ -5,9 +6,13 @@ import { badRequest, serverError } from '@/shared/helpers/http.helper'
 import { HttpRequest } from '@/shared/types/http.type'
 import { SaveLeadController } from './save-lead.controller'
 
-const makeGetLeadByEmailUseCaseStub = (): SaveLeadUseCaseInterface => ({
+const getLeadByEmailUseCaseStub: jest.Mocked<GetLeadByEmailUseCaseInterface> = {
   execute: jest.fn()
-})
+}
+
+const saveLeadUseCaseStub: jest.Mocked<SaveLeadUseCaseInterface> = {
+  execute: jest.fn()
+}
 
 const makeSut = (): SaveLeadController => {
   return new SaveLeadController(getLeadByEmailUseCaseStub, saveLeadUseCaseStub)
@@ -20,14 +25,10 @@ const makeLeadInput = (): HttpRequest => ({
   }
 })
 
-let getLeadByEmailUseCaseStub
-const saveLeadUseCaseStub: jest.Mocked<SaveLeadUseCaseInterface> = {
-  execute: jest.fn()
-}
-
+let input
 describe('SaveLeadController', () => {
   beforeEach(() => {
-    getLeadByEmailUseCaseStub = makeGetLeadByEmailUseCaseStub()
+    input = makeLeadInput()
   })
   afterEach(() => {
     jest.resetAllMocks()
@@ -35,7 +36,6 @@ describe('SaveLeadController', () => {
 
   test('should return 400 if name is not provided', async () => {
     const sut = makeSut()
-    const input = makeLeadInput()
     input.body.name = null
     const response = await sut.execute(input)
     expect(response).toEqual(badRequest(new MissingParamError('name')))
@@ -43,7 +43,6 @@ describe('SaveLeadController', () => {
 
   test('should return 400 if email is not provided', async () => {
     const sut = makeSut()
-    const input = makeLeadInput()
     input.body.email = null
     const response = await sut.execute(input)
     expect(response).toEqual(badRequest(new MissingParamError('email')))
@@ -51,7 +50,6 @@ describe('SaveLeadController', () => {
 
   test('should call GetLeadByEmailUseCase once and with correct email', async () => {
     const sut = makeSut()
-    const input = makeLeadInput()
     await sut.execute(input)
 
     expect(getLeadByEmailUseCaseStub.execute).toHaveBeenCalledTimes(1)
@@ -60,7 +58,6 @@ describe('SaveLeadController', () => {
 
   test('should return 400 if email already exists', async () => {
     const sut = makeSut()
-    const input = makeLeadInput()
 
     getLeadByEmailUseCaseStub.execute.mockResolvedValueOnce({
       id: '390d8ad3-185e-43c8-8c3f-48eaea7e46f5',
@@ -78,7 +75,6 @@ describe('SaveLeadController', () => {
 
   test('should return 500 if GetLeadByEmailUseCase throw an exception', async () => {
     const sut = makeSut()
-    const input = makeLeadInput()
 
     getLeadByEmailUseCaseStub.execute.mockRejectedValueOnce(new Error())
 
@@ -89,10 +85,19 @@ describe('SaveLeadController', () => {
 
   test('should call SaveLeadUseCase once and with correct values', async () => {
     const sut = makeSut()
-    const input = makeLeadInput()
     await sut.execute(input)
 
     expect(saveLeadUseCaseStub.execute).toHaveBeenCalledTimes(1)
     expect(saveLeadUseCaseStub.execute).toHaveBeenCalledWith('Any Name', 'anyEmail@email.com')
+  })
+
+  test('should return 500 if SaveLeadUseCase throw an exception', async () => {
+    const sut = makeSut()
+
+    saveLeadUseCaseStub.execute.mockRejectedValueOnce(new Error())
+
+    const error = await sut.execute(input)
+
+    expect(error).toEqual(serverError(new Error()))
   })
 })
