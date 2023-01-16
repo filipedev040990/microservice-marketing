@@ -1,7 +1,7 @@
 import { SaveLeadUseCaseInterface } from '@/domain/usecases/save-lead.usecase.interface'
 import { InvalidParamError } from '@/shared/errors/invalid-param.error'
 import { MissingParamError } from '@/shared/errors/missing-param.error'
-import { badRequest } from '@/shared/helpers/http.helper'
+import { badRequest, serverError } from '@/shared/helpers/http.helper'
 import { HttpRequest } from '@/shared/types/http.type'
 import { SaveLeadController } from './save-lead.controller'
 
@@ -71,5 +71,16 @@ describe('SaveLeadController', () => {
 
     expect(getLeadByEmailUseCaseStub.execute).toHaveBeenCalledTimes(1)
     expect(response).toEqual(badRequest(new InvalidParamError('This email already exists')))
+  })
+
+  test('should return 500 if GetLeadByEmailUseCase throw an exception', async () => {
+    const sut = makeSut()
+    const input = makeLeadInput()
+
+    getLeadByEmailUseCaseStub.execute.mockRejectedValueOnce(new Error())
+
+    const error = await sut.execute(input)
+
+    expect(error).toEqual(serverError(new Error()))
   })
 })
