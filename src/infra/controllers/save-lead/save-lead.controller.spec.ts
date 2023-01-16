@@ -1,5 +1,6 @@
 import { GetLeadByEmailUseCaseInterface } from '@/domain/usecases/get-lead-by-email.usecase.interface'
 import { SaveLeadUseCaseInterface } from '@/domain/usecases/save-lead.usecase.interface'
+import { EmailValitorInterface } from '@/domain/validation/email-validator.interface'
 import { InvalidParamError, MissingParamError } from '@/shared/errors'
 import { badRequest, noContent, serverError } from '@/shared/helpers/http.helper'
 import { HttpRequest } from '@/shared/types/http.type'
@@ -13,8 +14,12 @@ const saveLeadUseCaseStub: jest.Mocked<SaveLeadUseCaseInterface> = {
   execute: jest.fn()
 }
 
+const emailValidatorStub: jest.Mocked<EmailValitorInterface> = {
+  execute: jest.fn().mockReturnValue(true)
+}
+
 const makeSut = (): SaveLeadController => {
-  return new SaveLeadController(getLeadByEmailUseCaseStub, saveLeadUseCaseStub)
+  return new SaveLeadController(emailValidatorStub, getLeadByEmailUseCaseStub, saveLeadUseCaseStub)
 }
 
 const makeLeadInput = (): HttpRequest => ({
@@ -43,6 +48,12 @@ describe('SaveLeadController', () => {
   test('should return 400 if email is not provided', async () => {
     input.body.email = null
     expect(await sut.execute(input)).toEqual(badRequest(new MissingParamError('email')))
+  })
+
+  test('should call EmailValidator once and with correct email', async () => {
+    await sut.execute(input)
+    expect(emailValidatorStub.execute).toHaveBeenCalledTimes(1)
+    expect(emailValidatorStub.execute).toHaveBeenCalledWith('anyEmail@email.com')
   })
 
   test('should call GetLeadByEmailUseCase once and with correct email', async () => {
