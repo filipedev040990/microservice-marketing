@@ -20,7 +20,10 @@ export class SaveLeadController implements ControllerInterface {
         return badRequest(new MissingParamError(missingParamName))
       }
 
-      this.emailValidator.execute(input.body.email)
+      const isValidEmail = this.emailValidator.execute(input.body.email)
+      if (!isValidEmail) {
+        return badRequest(new InvalidParamError('email'))
+      }
       const emailExists = await this.getLeadByEmailUseCase.execute(input.body.email)
       if (emailExists) {
         return badRequest(new InvalidParamError('This email already exists'))
