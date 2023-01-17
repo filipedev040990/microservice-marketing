@@ -4,7 +4,7 @@
 
 1. ⛔ Recebe uma requisição do tipo **POST** na rota **/api/leads**
 2. ✅ Valida dados obrigatórios **nome** e **email**
-3. ⛔ Valida o **email**
+3. ✅ Valida o **email**
 4. ✅ **Salva** os dados fornecidos
 5. ✅ Retorna **400** se o email já estiver cadastrado
 
