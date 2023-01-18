@@ -1,4 +1,4 @@
-type InputLead = {
+export type InputLead = {
   id: string
   name: string
   email: string
