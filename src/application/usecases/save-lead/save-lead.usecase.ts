@@ -7,7 +7,6 @@ export class SaveLeadUseCase implements SaveLeadUseCaseInterface {
   async execute (name: string, email: string): Promise<void> {
     const lead = new Lead(name, email)
     await this.leadRepository.save({
-      id: lead.id,
       name: lead.name,
       email: lead.email,
       status: lead.status,

@@ -2,7 +2,6 @@ import { MongoHelper } from '../helpers/mongo.helper'
 import { LeadRepository } from './lead.repository'
 import MockDate from 'mockdate'
 import { HttpRequest } from '@/shared/types/http.type'
-import crypto from 'crypto'
 
 const makeSut = (): LeadRepository => {
   return new LeadRepository()
@@ -10,7 +9,6 @@ const makeSut = (): LeadRepository => {
 
 const makeLeadInputMock = (): HttpRequest => ({
   body: {
-    id: crypto.randomUUID(),
     name: 'Any Name',
     email: 'anyEmail@email.com',
     status: 'INTERESTED',
@@ -45,7 +43,7 @@ describe('LeadRepository', () => {
     const lead = await leadCollection.findOne({ email: input.body.email })
 
     expect(lead).toBeTruthy()
-    expect(lead).toHaveProperty('id')
+    expect(lead).toHaveProperty('_id')
     expect(lead.name).toBe(input.body.name)
     expect(lead.email).toBe(input.body.email)
     expect(lead.status).toBe('INTERESTED')
@@ -56,7 +54,6 @@ describe('LeadRepository', () => {
     const sut = makeSut()
 
     await leadCollection.insertOne({
-      id: crypto.randomUUID(),
       name: 'Any Name',
       email: 'anyEmail@email.com',
       status: 'INTERESTED',

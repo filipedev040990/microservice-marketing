@@ -2,10 +2,6 @@ import { SaveLeadRepositoryInterface } from '@/domain/repositories/save-lead.rep
 import { SaveLeadUseCase } from './save-lead.usecase'
 import MockDate from 'mockdate'
 
-jest.mock('crypto', () => ({
-  randomUUID: jest.fn(() => '390d8ad3-185e-43c8-8c3f-48eaea7e46f5')
-}))
-
 const leadRepository: jest.Mocked<SaveLeadRepositoryInterface> = {
   save: jest.fn()
 }
@@ -28,7 +24,6 @@ describe('SaveLeadUseCase', () => {
 
     expect(leadRepository.save).toHaveBeenCalledTimes(1)
     expect(leadRepository.save).toHaveBeenCalledWith({
-      id: '390d8ad3-185e-43c8-8c3f-48eaea7e46f5',
       name: 'Any Name',
       email: 'anyEmail@email.com',
       status: 'Interested',

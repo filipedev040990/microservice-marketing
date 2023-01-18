@@ -13,7 +13,6 @@ const makeSut = (): GetLeadByEmailUseCase => {
 }
 
 const fakeLead: Lead = {
-  id: '390d8ad3-185e-43c8-8c3f-48eaea7e46f5',
   name: 'Any Name',
   email: 'anyEmail@email.com',
   status: constants.LEAD_STATUS_INTERESTED,
@@ -53,7 +52,6 @@ describe('GetLeadByEmailUseCase', () => {
 
     expect(response).toBeTruthy()
     expect(response).toEqual({
-      id: '390d8ad3-185e-43c8-8c3f-48eaea7e46f5',
       name: 'Any Name',
       email: 'anyEmail@email.com',
       status: constants.LEAD_STATUS_INTERESTED,

@@ -86,7 +86,6 @@ describe('SaveLeadController', () => {
   test('should return 400 if email already exists', async () => {
     const { sut } = makeSut()
     getLeadByEmailUseCaseStub.execute.mockResolvedValueOnce({
-      id: '390d8ad3-185e-43c8-8c3f-48eaea7e46f5',
       name: 'Any Name',
       email: 'anyEmail@email.com',
       status: 'Interested',
