@@ -2,4 +2,4 @@
 
 > ## Caso de sucesso
 
-1. ⛔ Atualiza status do lead
+1. ✅  Atualiza status do lead
