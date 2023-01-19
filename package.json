@@ -27,6 +27,7 @@
   "homepage": "https://github.com/filipedev040990/template#readme",
   "devDependencies": {
     "@shelf/jest-mongodb": "^4.1.4",
+    "@types/amqplib": "^0.10.1",
     "@types/express": "^4.17.15",
     "@types/jest": "^28.1.6",
     "@types/mongodb": "^4.0.7",
@@ -48,6 +49,7 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
+    "amqplib": "^0.10.3",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "module-alias": "^2.2.2",
