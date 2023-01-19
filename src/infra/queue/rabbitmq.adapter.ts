@@ -16,7 +16,7 @@ export class RabbitmqAdapter implements QueueInterface {
     await this.channel.assertQueue(queue, { durable: true })
     await this.channel.consume(queue, async (message: any) => {
       if (message) {
-        const input = JSON.parse(message.context.toString())
+        const input = message.content.toString()
         await callback(input)
         this.channel.ack(message)
       }

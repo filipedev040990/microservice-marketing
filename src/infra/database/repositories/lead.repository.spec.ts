@@ -65,4 +65,23 @@ describe('LeadRepository', () => {
     expect(lead).toBeTruthy()
     expect(lead.email).toBe('anyEmail@email.com')
   })
+
+  test('should update lead status to CUSTOMER', async () => {
+    const sut = makeSut()
+
+    await leadCollection.insertOne({
+      name: 'Any Name',
+      email: 'anyEmail@email.com',
+      status: 'INTERESTED',
+      created_at: new Date(),
+      updated_at: new Date()
+    })
+
+    await sut.update('anyEmail@email.com', 'CUSTOMER')
+
+    const lead = await sut.getByEmail('anyEmail@email.com')
+
+    expect(lead).toBeTruthy()
+    expect(lead.status).toBe('CUSTOMER')
+  })
 })
