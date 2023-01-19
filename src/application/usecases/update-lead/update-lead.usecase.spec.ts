@@ -17,4 +17,14 @@ describe('Update Lead UseCase', () => {
     expect(leadRepository.update).toHaveBeenCalledTimes(1)
     expect(leadRepository.update).toHaveBeenCalledWith('anyEmail@email.com', 'Customer')
   })
+
+  test('should return server error if LeadRepository.update throws an exception', async () => {
+    const sut = makeSut()
+
+    leadRepository.update.mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    await expect(sut.execute('anyEmail@email.com', 'Customer')).rejects.toThrow()
+  })
 })
