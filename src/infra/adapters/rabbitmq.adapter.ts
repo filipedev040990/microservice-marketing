@@ -1,4 +1,4 @@
-import { Connection, Channel, connect } from 'amqplib'
+import { Connection, Channel, connect, Message } from 'amqplib'
 import { QueueInterface } from '@/domain/queue/queue.interface'
 
 export class RabbitmqAdapter implements QueueInterface {
@@ -12,19 +12,18 @@ export class RabbitmqAdapter implements QueueInterface {
     this.channel = await this.connection.createChannel()
   }
 
-  async consume (queue: string, callback: Function): Promise<any> {
+  async consume (queue: string, callback: (message: Message) => void): Promise<any> {
     await this.channel.assertQueue(queue, { durable: true })
     await this.channel.consume(queue, async (message: any) => {
       if (message) {
-        const input = JSON.parse(message.context.toString())
-        await callback(input)
+        callback(message)
         this.channel.ack(message)
       }
     })
   }
 
   async publish (exchange: string, routingKey: string, message: string): Promise<boolean> {
-    return await this.channel.publish(exchange, routingKey, Buffer.from(message))
+    return this.channel.publish(exchange, routingKey, Buffer.from(message))
   }
 
   async close (): Promise<void> {

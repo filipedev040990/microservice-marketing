@@ -2,5 +2,5 @@
 
 > ## Caso de sucesso
 
-1. ⛔ Consome fila de confirmação de pagamento
-2. ⛔ Atualiza status do lead para 'customer'
+1. ✅ Consome fila de confirmação de pagamento
+2. ✅ Atualiza status do lead para 'customer'
