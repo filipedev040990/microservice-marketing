@@ -6,6 +6,7 @@ import { ConsumeQueueConfirmedPayment } from './queue/consume-queue-confirmed_pa
 
 const start = async (): Promise<void> => {
   try {
+    await ConsumeQueueConfirmedPayment()
     await MongoHelper.connect(config.mongodb.mongoUrl)
     const port = config.server.port || 3000
     app.listen(port, () => console.log(`Server running at ${port}`))
