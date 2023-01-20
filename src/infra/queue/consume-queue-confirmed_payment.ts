@@ -7,7 +7,7 @@ import { LeadRepository } from '../database/repositories/lead.repository'
 export const ConsumeQueueConfirmedPayment = async (): Promise<void> => {
   const server = new RabbitmqAdapter(config.rabbitmq.uri)
   await server.start()
-  await server.consume('confirmed_payment', async (message: any) => {
+  await server.consume('payment_confirmed', async (message: any) => {
     const msg = JSON.parse(message.content.toString())
     const leadRepository = new LeadRepository()
     const updateLeadUseCase = new UpdateLeadUseCase(leadRepository)

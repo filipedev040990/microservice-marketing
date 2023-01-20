@@ -8,12 +8,12 @@ describe('RabbitmqAdapter', () => {
   test.skip('should publish an message', async () => {
     const sut = makeSut()
     const message = {
-      action: 'confirmed_payment',
-      client: 'mariachiqunha@hotmail.com.br'
+      action: 'payment_confirmed',
+      client: 'joao@hotmail.com.br'
     }
 
     await sut.start()
-    const publish = await sut.publish('amq.direct', 'confirmed_payment', JSON.stringify(message))
+    const publish = await sut.publish('amq.direct', 'payment_confirmed', JSON.stringify(message))
 
     expect(publish).toBeTruthy()
   })
